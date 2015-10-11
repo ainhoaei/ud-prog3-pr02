@@ -17,11 +17,15 @@ public class VentanaJuego extends JFrame {
 	MundoJuego miMundo;        // Mundo del juego
 	CocheJuego miCoche;        // Coche del juego
 	MiRunnable miHilo = null;  // Hilo del bucle principal de juego	
+	private static boolean[] pulsaciones;
 
 	/** Constructor de la ventana de juego. Crea y devuelve la ventana inicializada
 	 * sin coches dentro
 	 */
 	public VentanaJuego() {
+		
+		pulsaciones = new boolean[3];
+		
 		// Liberación de la ventana por defecto al cerrar
 		setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
 		// Creación contenedores y componentes
@@ -81,18 +85,82 @@ public class VentanaJuego extends JFrame {
 				switch (e.getKeyCode()) {
 					case KeyEvent.VK_UP: {
 						miCoche.acelera( +5, 1 );
+						pulsaciones [0] = true;
+						if(KeyEvent.VK_LEFT==KeyEvent.KEY_PRESSED){
+							pulsaciones [2] = true;
+							pulsaciones [1] = false;
+							pulsaciones [3] = false;
+						}
+						if(KeyEvent.VK_RIGHT==KeyEvent.KEY_PRESSED){
+							pulsaciones [3] = true;
+							pulsaciones [1] = false;
+							pulsaciones [2] = false;
+						}
+						else{
+							pulsaciones [1] = false;
+							pulsaciones [2] = false;
+							pulsaciones [3] = false;
+						}
 						break;
 					}
 					case KeyEvent.VK_DOWN: {
 						miCoche.acelera( -5, 1 );
+						pulsaciones [1] = true;
+						if(KeyEvent.VK_LEFT==KeyEvent.KEY_PRESSED){
+							pulsaciones [2] = true;
+							pulsaciones [0] = false;
+							pulsaciones [3] = false;
+						}
+						if(KeyEvent.VK_RIGHT==KeyEvent.KEY_PRESSED){
+							pulsaciones [3] = true;
+							pulsaciones [0] = false;
+							pulsaciones [2] = false;
+						}
+						else{
+							pulsaciones [0] = false;
+							pulsaciones [2] = false;
+							pulsaciones [3] = false;
+						}
 						break;
 					}
 					case KeyEvent.VK_LEFT: {
 						miCoche.gira( +10 );
+						pulsaciones [2] = true;
+						if(KeyEvent.VK_UP==KeyEvent.KEY_PRESSED){
+							pulsaciones [0] = true;
+							pulsaciones [1] = false;
+							pulsaciones [3] = false;
+						}
+						if(KeyEvent.VK_DOWN==KeyEvent.KEY_PRESSED){
+							pulsaciones [1] = true;
+							pulsaciones [0] = false;
+							pulsaciones [3] = false;
+						}
+						else{
+							pulsaciones [0] = false;
+							pulsaciones [1] = false;
+							pulsaciones [3] = false;
+						}
 						break;
 					}
 					case KeyEvent.VK_RIGHT: {
 						miCoche.gira( -10 );
+						pulsaciones [3] = true;
+						if(KeyEvent.VK_UP==KeyEvent.KEY_PRESSED){
+							pulsaciones [0] = true;
+							pulsaciones [1] = false;
+							pulsaciones [2] = false;
+						}
+						if(KeyEvent.VK_DOWN==KeyEvent.KEY_PRESSED){
+							pulsaciones [1] = true;
+							pulsaciones [0] = false;
+							pulsaciones [2] = false;
+						}
+						else{
+							pulsaciones [0] = false;
+							pulsaciones [1] = false;
+							pulsaciones [2] = false;
+						}
 						break;
 					}
 				}
@@ -114,6 +182,7 @@ public class VentanaJuego extends JFrame {
 			}
 		});
 	}
+	
 	
 	/** Programa principal de la ventana de juego
 	 * @param args

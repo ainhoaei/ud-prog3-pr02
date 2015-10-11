@@ -18,12 +18,16 @@ public class JLabelCoche extends JLabel {
 	public static final int RADIO_ESFERA_COCHE = 35;  // Radio en píxels del bounding circle del coche (para choques)
 	private static final boolean DIBUJAR_ESFERA_COCHE = true;  // Dibujado (para depuración) del bounding circle de choque del coche
 	
+	
 	/** Construye y devuelve el JLabel del coche con su gráfico y tamaño
 	 */
 	public JLabelCoche() {
 		// Esto se haría para acceder por sistema de ficheros
 		// 		super( new ImageIcon( "bin/ud/prog3/pr00/coche.png" ) );
 		// Esto se hace para acceder tanto por recurso (jar) como por fichero
+		
+		
+		
 		try {
 			setIcon( new ImageIcon( JLabelCoche.class.getResource( "img/coche.png" ).toURI().toURL() ) );
 		} catch (Exception e) {
