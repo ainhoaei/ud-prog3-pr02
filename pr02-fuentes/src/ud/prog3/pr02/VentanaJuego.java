@@ -24,6 +24,8 @@ public class VentanaJuego extends JFrame {
 	 */
 	public VentanaJuego() {
 		
+		//JLabelEstrella estrella = new JLabelEstrella();
+		
 		pulsaciones = new boolean[3];
 		
 		// Liberación de la ventana por defecto al cerrar

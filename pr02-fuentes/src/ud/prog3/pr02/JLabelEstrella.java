@@ -13,6 +13,7 @@ public class JLabelEstrella extends JLabel{
 	public static final int TAMANYO_ESTRELLA = 80;  // píxels (igual ancho que algo)
 	public static final int RADIO_ESFERA_ESTRELLA = 17;  // Radio en píxels del bounding circle del coche (para choques)
 	private Calendar horaCrear;
+	private MundoJuego juego;
 	
 	
 	/** Construye y devuelve el JLabel del coche con su gráfico y tamaño
@@ -26,6 +27,10 @@ public class JLabelEstrella extends JLabel{
 			setIcon( new ImageIcon( JLabelCoche.class.getResource( "img/estrella.png" ).toURI().toURL() ) );
 			horaCrear = new GregorianCalendar();
 			long horaCrearEstrella= System.currentTimeMillis();
+			long horaCrearEstrella2 = horaCrearEstrella;
+			if (horaCrearEstrella > (horaCrearEstrella2 + 1.2)){
+				juego.crearEstrella();		
+			}
 			
 		} catch (Exception e) {
 			System.err.println( "Error en carga de recurso: estrella.png no encontrado" );

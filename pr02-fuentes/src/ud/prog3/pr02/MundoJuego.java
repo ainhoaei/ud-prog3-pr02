@@ -1,5 +1,8 @@
 package ud.prog3.pr02;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 import javax.swing.JPanel;
 
 /** "Mundo" del juego del coche.
@@ -108,4 +111,16 @@ public class MundoJuego {
 		return vel + (acel*tiempo);
 	}
 	
+	/** Si han pasado más de 1,2 segundos desde la última,
+	 * crea una estrella nueva en una posición aleatoria y la añade al mundo y al panel visual */
+	public void crearEstrella(){
+		
+		JLabelEstrella estrella = new JLabelEstrella();
+		VentanaJuego Vjuego = new VentanaJuego();
+		int PosRandom = new Random().nextInt(1000);
+		ArrayList estrellas = new ArrayList();
+		estrellas.add(estrella);
+		
+	}
+	 
 }
