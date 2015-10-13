@@ -249,6 +249,28 @@ public class VentanaJuego extends JFrame {
 			
 		}
 		
+		/** Quita todas las estrellas que lleven en pantalla demasiado tiempo
+		* y rota 10 grados las que sigan estando
+		* @param maxTiempo Tiempo máximo para que se mantengan las estrellas (msegs)
+		* @return Número de estrellas quitadas */
+		public int quitaYRotaEstrellas( long maxTiempo ){
+			
+			//????????????????????????
+			
+			return (int) maxTiempo;
+		}
+		
+		/** Calcula si hay choques del coche con alguna estrella (o varias). Se considera el choque si
+		* se tocan las esferas lógicas del coche y la estrella. Si es así, las elimina.
+		* @return Número de estrellas eliminadas
+		*/
+		public int choquesConEstrellas(){
+			
+			//???????????????????????
+			
+			return 1;
+		}
+		
 		/** Ordena al hilo detenerse en cuanto sea posible
 		 */
 		public void acaba() {
