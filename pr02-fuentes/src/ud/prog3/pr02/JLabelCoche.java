@@ -25,9 +25,7 @@ public class JLabelCoche extends JLabel {
 		// Esto se haría para acceder por sistema de ficheros
 		// 		super( new ImageIcon( "bin/ud/prog3/pr00/coche.png" ) );
 		// Esto se hace para acceder tanto por recurso (jar) como por fichero
-		
-		
-		
+
 		try {
 			setIcon( new ImageIcon( JLabelCoche.class.getResource( "img/coche.png" ).toURI().toURL() ) );
 		} catch (Exception e) {

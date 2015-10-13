@@ -3,6 +3,8 @@ package ud.prog3.pr02;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.*;
 
@@ -18,6 +20,7 @@ public class VentanaJuego extends JFrame {
 	static CocheJuego miCoche;        // Coche del juego
 	MiRunnable miHilo = null;  // Hilo del bucle principal de juego	
 	private static boolean[] pulsaciones;
+	JLabelEstrella estrella;
 
 	/** Constructor de la ventana de juego. Crea y devuelve la ventana inicializada
 	 * sin coches dentro
@@ -26,6 +29,7 @@ public class VentanaJuego extends JFrame {
 		
 		//JLabelEstrella estrella = new JLabelEstrella();
 		pulsaciones = new boolean[4];
+		estrella = new JLabelEstrella();
 		
 		// Liberación de la ventana por defecto al cerrar
 		setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
@@ -87,11 +91,13 @@ public class VentanaJuego extends JFrame {
 					case KeyEvent.VK_UP: {
 						//miCoche.acelera( +5, 1 );
 						pulsaciones[0] = true;
+						miMundo.aplicarFuerza(miCoche.fuerzaAceleracionAdelante(), miCoche);
 						break;
 					}
 					case KeyEvent.VK_DOWN: {
 						//miCoche.acelera( -5, 1 );
 						pulsaciones[1] = true;
+						miMundo.aplicarFuerza(miCoche.FuerzaAceleraionAtras(), miCoche);
 						break;
 					}
 					case KeyEvent.VK_LEFT: {
@@ -187,9 +193,17 @@ public class VentanaJuego extends JFrame {
 		@Override
 		public void run() {
 			// Bucle principal forever hasta que se pare el juego...
+			double segundos = 0.0;
 			while (sigo) {
 				// Mover coche
 				miCoche.mueve( 0.040 );
+				
+				// Chequear choques
+				// (se comprueba tanto X como Y porque podría a la vez chocar en las dos direcciones (esquinas)
+				if (miMundo.hayChoqueHorizontal(miCoche)) // Espejo horizontal si choca en X
+					miMundo.rebotaHorizontal(miCoche);
+				if (miMundo.hayChoqueVertical(miCoche)) // Espejo vertical si choca en Y
+					miMundo.rebotaVertical(miCoche);
 				
 				// Hau egin aurretik, botoiai eman eta segundu batzuk geldi egoten zen, ez zen segidon eta settun bueltaka hasten. 
 				// Hau eginda ez da geratzen, zuzenen bueltaka hasten de milisegundo horiek geldirik egon gabe.
@@ -206,12 +220,12 @@ public class VentanaJuego extends JFrame {
 						miCoche.gira( -10 );
 					}
 				
-				// Chequear choques
-				// (se comprueba tanto X como Y porque podría a la vez chocar en las dos direcciones (esquinas)
-				if (miMundo.hayChoqueHorizontal(miCoche)) // Espejo horizontal si choca en X
-					miMundo.rebotaHorizontal(miCoche);
-				if (miMundo.hayChoqueVertical(miCoche)) // Espejo vertical si choca en Y
-					miMundo.rebotaVertical(miCoche);
+				
+				if(segundos >= 1.2){
+					this.crearEstrella();
+				}
+				
+				segundos = segundos + 0.040;
 				
 				// Dormir el hilo 40 milisegundos
 				try {
@@ -221,6 +235,20 @@ public class VentanaJuego extends JFrame {
 			
 			}
 		}
+		
+		/** Si han pasado más de 1,2 segundos desde la última,
+		 * crea una estrella nueva en una posición aleatoria y la añade al mundo y al panel visual */
+		public void crearEstrella(){
+			
+			//???????????????????
+			
+			int PosRandomX = new Random().nextInt(1000);
+			int PosRandomY = new Random().nextInt(750);
+			ArrayList<JLabelEstrella> estrellas = new ArrayList<JLabelEstrella>();
+			estrellas.add( estrella );
+			
+		}
+		
 		/** Ordena al hilo detenerse en cuanto sea posible
 		 */
 		public void acaba() {

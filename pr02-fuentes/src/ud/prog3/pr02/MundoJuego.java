@@ -111,16 +111,38 @@ public class MundoJuego {
 		return vel + (acel*tiempo);
 	}
 	
-	/** Si han pasado más de 1,2 segundos desde la última,
-	 * crea una estrella nueva en una posición aleatoria y la añade al mundo y al panel visual */
-	public void crearEstrella(){
-		
-		JLabelEstrella estrella = new JLabelEstrella();
-		VentanaJuego Vjuego = new VentanaJuego();
-		int PosRandom = new Random().nextInt(1000);
-		ArrayList estrellas = new ArrayList();
-		estrellas.add(estrella);
-		
+	/**Añade un método estático en nuestro MundoJuego para calcular la fuerza de rozamiento partiendo de la
+		masa, la velocidad y los coeficientes (según la fórmula).
+	*/
+	public static double calcFuerzaRozamiento (double masa, double coefRozSuelo, double coefRozAire, double vel){
+		double fuerzaRozamientoAire = coefRozAire*(-vel); //En contra del movimiento
+		double fuerzaRozamientoSuelo = masa*coefRozSuelo*((vel>0)?(-1):1); //contra movimiento --> ??????
+		return fuerzaRozamientoAire + fuerzaRozamientoSuelo;
+	}
+	
+	/**Añade otro método estático para partiendo de la fuerza se calcule la aceleración:
+	*/	
+	public static double calcAceleracionConFuerza( double fuerza, double masa ) {
+	// 2ª ley de Newton: F = m*a ---> a = F/m
+	return fuerza/masa;
 	}
 	 
+	/**Por último en esta clase MundoJuego, añade un método para poder aplicar la fuerza al coche. Observa cómo
+		si no hay fuerza externa, la única fuerza que se aplica es la de rozamiento hasta que el coche se para:
+	*/
+	public void aplicarFuerza( double fuerza, Coche coche ) {
+		double fuerzaRozamiento = calcFuerzaRozamiento( coche.masa , coche.coefSuelo, coche.coefAire, coche.getVelocidad() );
+		double aceleracion = calcAceleracionConFuerza( fuerza+fuerzaRozamiento, coche.masa );
+		
+		if (fuerza==0) {
+		// No hay fuerza, solo se aplica el rozamiento
+			double velAntigua = coche.getVelocidad();
+			coche.acelera( aceleracion, 0.04 );
+			if (velAntigua>=0 && coche.getVelocidad()<0 || velAntigua<=0 && coche.getVelocidad()>0) {
+				coche.setVelocidad(0); // Si se está frenando, se para (no anda al revés)
+			}
+		} else {
+			coche.acelera( aceleracion, 0.04 );
+		}
+	}
 }

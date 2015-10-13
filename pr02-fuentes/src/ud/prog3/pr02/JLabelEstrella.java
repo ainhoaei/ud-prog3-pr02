@@ -1,5 +1,9 @@
 package ud.prog3.pr02;
 
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -12,9 +16,7 @@ public class JLabelEstrella extends JLabel{
 	private static final long serialVersionUID = 1L;  // Para serialización
 	public static final int TAMANYO_ESTRELLA = 80;  // píxels (igual ancho que algo)
 	public static final int RADIO_ESFERA_ESTRELLA = 17;  // Radio en píxels del bounding circle del coche (para choques)
-	private Calendar horaCrear;
-	private MundoJuego juego;
-	
+	private static final boolean DIBUJAR_ESFERA_ESTRELLA = true;  // Dibujado (para depuración) del bounding circle de choque del coche
 	
 	/** Construye y devuelve el JLabel del coche con su gráfico y tamaño
 	 */
@@ -24,14 +26,8 @@ public class JLabelEstrella extends JLabel{
 		// Esto se hace para acceder tanto por recurso (jar) como por fichero
 		
 		try {
-			setIcon( new ImageIcon( JLabelCoche.class.getResource( "img/estrella.png" ).toURI().toURL() ) );
-			horaCrear = new GregorianCalendar();
-			long horaCrearEstrella= System.currentTimeMillis();
-			long horaCrearEstrella2 = horaCrearEstrella;
-			if (horaCrearEstrella > (horaCrearEstrella2 + 1.2)){
-				juego.crearEstrella();		
-			}
-			
+			setIcon( new ImageIcon( JLabelEstrella.class.getResource( "img/estrella.png" ).toURI().toURL() ) );
+				
 		} catch (Exception e) {
 			System.err.println( "Error en carga de recurso: estrella.png no encontrado" );
 			e.printStackTrace();
@@ -57,4 +53,20 @@ public class JLabelEstrella extends JLabel{
 			miGiro = miGiro + Math.PI/2; // Sumo 90º para que corresponda al origen OX
 		}
 
+		@Override
+		protected void paintComponent(Graphics g) {
+//			super.paintComponent(g);   // En este caso no nos sirve el pintado normal de un JLabel
+			Image img = ((ImageIcon)getIcon()).getImage();
+			Graphics2D g2 = (Graphics2D) g;  // El Graphics realmente es Graphics2D
+			// Escalado más fino con estos 3 parámetros:
+			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			g2.setRenderingHint(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_QUALITY);
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);	
+			// Prepara rotación (siguientes operaciones se rotarán)
+	        g2.rotate( miGiro, TAMANYO_ESTRELLA/2, TAMANYO_ESTRELLA/2 ); // getIcon().getIconWidth()/2, getIcon().getIconHeight()/2 );
+	        // Dibujado de la imagen
+	        g2.drawImage( img, 0, 0, TAMANYO_ESTRELLA, TAMANYO_ESTRELLA, null );
+	        if (DIBUJAR_ESFERA_ESTRELLA) g2.drawOval( TAMANYO_ESTRELLA/2-RADIO_ESFERA_ESTRELLA, TAMANYO_ESTRELLA/2-RADIO_ESFERA_ESTRELLA,
+	        		RADIO_ESFERA_ESTRELLA*2, RADIO_ESFERA_ESTRELLA*2 );
+		}
 }
