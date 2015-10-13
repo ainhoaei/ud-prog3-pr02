@@ -15,7 +15,7 @@ public class VentanaJuego extends JFrame {
 	private static final long serialVersionUID = 1L;  // Para serialización
 	JPanel pPrincipal;         // Panel del juego (layout nulo)
 	MundoJuego miMundo;        // Mundo del juego
-	CocheJuego miCoche;        // Coche del juego
+	static CocheJuego miCoche;        // Coche del juego
 	MiRunnable miHilo = null;  // Hilo del bucle principal de juego	
 	private static boolean[] pulsaciones;
 
@@ -25,8 +25,7 @@ public class VentanaJuego extends JFrame {
 	public VentanaJuego() {
 		
 		//JLabelEstrella estrella = new JLabelEstrella();
-		
-		pulsaciones = new boolean[3];
+		pulsaciones = new boolean[4];
 		
 		// Liberación de la ventana por defecto al cerrar
 		setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
@@ -86,87 +85,52 @@ public class VentanaJuego extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				switch (e.getKeyCode()) {
 					case KeyEvent.VK_UP: {
-						miCoche.acelera( +5, 1 );
-						pulsaciones [0] = true;
-						if(KeyEvent.VK_LEFT==KeyEvent.KEY_PRESSED){
-							pulsaciones [2] = true;
-							pulsaciones [1] = false;
-							pulsaciones [3] = false;
-						}
-						if(KeyEvent.VK_RIGHT==KeyEvent.KEY_PRESSED){
-							pulsaciones [3] = true;
-							pulsaciones [1] = false;
-							pulsaciones [2] = false;
-						}
-						else{
-							pulsaciones [1] = false;
-							pulsaciones [2] = false;
-							pulsaciones [3] = false;
-						}
+						//miCoche.acelera( +5, 1 );
+						pulsaciones[0] = true;
 						break;
 					}
 					case KeyEvent.VK_DOWN: {
-						miCoche.acelera( -5, 1 );
-						pulsaciones [1] = true;
-						if(KeyEvent.VK_LEFT==KeyEvent.KEY_PRESSED){
-							pulsaciones [2] = true;
-							pulsaciones [0] = false;
-							pulsaciones [3] = false;
-						}
-						if(KeyEvent.VK_RIGHT==KeyEvent.KEY_PRESSED){
-							pulsaciones [3] = true;
-							pulsaciones [0] = false;
-							pulsaciones [2] = false;
-						}
-						else{
-							pulsaciones [0] = false;
-							pulsaciones [2] = false;
-							pulsaciones [3] = false;
-						}
+						//miCoche.acelera( -5, 1 );
+						pulsaciones[1] = true;
 						break;
 					}
 					case KeyEvent.VK_LEFT: {
-						miCoche.gira( +10 );
-						pulsaciones [2] = true;
-						if(KeyEvent.VK_UP==KeyEvent.KEY_PRESSED){
-							pulsaciones [0] = true;
-							pulsaciones [1] = false;
-							pulsaciones [3] = false;
-						}
-						if(KeyEvent.VK_DOWN==KeyEvent.KEY_PRESSED){
-							pulsaciones [1] = true;
-							pulsaciones [0] = false;
-							pulsaciones [3] = false;
-						}
-						else{
-							pulsaciones [0] = false;
-							pulsaciones [1] = false;
-							pulsaciones [3] = false;
-						}
+						//miCoche.gira( +10 );
+						pulsaciones[2] = true;
 						break;
 					}
 					case KeyEvent.VK_RIGHT: {
-						miCoche.gira( -10 );
-						pulsaciones [3] = true;
-						if(KeyEvent.VK_UP==KeyEvent.KEY_PRESSED){
-							pulsaciones [0] = true;
-							pulsaciones [1] = false;
-							pulsaciones [2] = false;
-						}
-						if(KeyEvent.VK_DOWN==KeyEvent.KEY_PRESSED){
-							pulsaciones [1] = true;
-							pulsaciones [0] = false;
-							pulsaciones [2] = false;
-						}
-						else{
-							pulsaciones [0] = false;
-							pulsaciones [1] = false;
-							pulsaciones [2] = false;
-						}
+						//miCoche.gira( -10 );
+						pulsaciones[3] = true;
+						break;
+					}
+				}	
+				
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				switch (e.getKeyCode()) {
+					case KeyEvent.VK_UP: {
+						pulsaciones[0] = false;
+						break;
+					}
+					case KeyEvent.VK_DOWN: {
+						pulsaciones[1] = false;
+						break;
+					}
+					case KeyEvent.VK_LEFT: {
+						pulsaciones[2] = false;
+						break;
+					}
+					case KeyEvent.VK_RIGHT: {
+						pulsaciones[3] = false;
 						break;
 					}
 				}
 			}
+				
 		});
 		pPrincipal.setFocusable(true);
 		pPrincipal.requestFocus();
@@ -191,6 +155,7 @@ public class VentanaJuego extends JFrame {
 	 */
 	public static void main(String[] args) {
 		// Crea y visibiliza la ventana con el coche
+		
 		try {
 			final VentanaJuego miVentana = new VentanaJuego();
 			SwingUtilities.invokeAndWait( new Runnable() {
@@ -207,6 +172,7 @@ public class VentanaJuego extends JFrame {
 			miVentana.miHilo = miVentana.new MiRunnable();  // Sintaxis de new para clase interna
 			Thread nuevoHilo = new Thread( miVentana.miHilo );
 			nuevoHilo.start();
+			
 		} catch (Exception e) {
 			System.exit(1);  // Error anormal
 		}
@@ -224,17 +190,35 @@ public class VentanaJuego extends JFrame {
 			while (sigo) {
 				// Mover coche
 				miCoche.mueve( 0.040 );
+				
+				// Hau egin aurretik, botoiai eman eta segundu batzuk geldi egoten zen, ez zen segidon eta settun bueltaka hasten. 
+				// Hau eginda ez da geratzen, zuzenen bueltaka hasten de milisegundo horiek geldirik egon gabe.
+					if(pulsaciones[0] == true){
+						miCoche.acelera( +5, 1 );
+					}
+					if(pulsaciones[1] == true){
+						miCoche.acelera( -5, 1 );
+					}
+					if(pulsaciones[2] == true){
+						miCoche.gira( +10 );
+					}
+					if(pulsaciones[3] == true){
+						miCoche.gira( -10 );
+					}
+				
 				// Chequear choques
 				// (se comprueba tanto X como Y porque podría a la vez chocar en las dos direcciones (esquinas)
 				if (miMundo.hayChoqueHorizontal(miCoche)) // Espejo horizontal si choca en X
 					miMundo.rebotaHorizontal(miCoche);
 				if (miMundo.hayChoqueVertical(miCoche)) // Espejo vertical si choca en Y
 					miMundo.rebotaVertical(miCoche);
+				
 				// Dormir el hilo 40 milisegundos
 				try {
 					Thread.sleep( 40 );
 				} catch (Exception e) {
 				}
+			
 			}
 		}
 		/** Ordena al hilo detenerse en cuanto sea posible
