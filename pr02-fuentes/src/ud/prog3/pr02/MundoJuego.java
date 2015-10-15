@@ -17,7 +17,9 @@ public class MundoJuego {
 	CocheJuego miCoche;    // Coche del juego
 	EstrellaJuego estrella;
 	JLabelCoche coche;
-	ArrayList<EstrellaJuego> estrellas = new ArrayList<EstrellaJuego>();;
+	ArrayList<EstrellaJuego> estrellas = new ArrayList<EstrellaJuego>();
+	int estrellasQuitadas = 0;
+	int numChoques = 0;
 	
 	
 	/** Construye un mundo de juego
@@ -178,8 +180,6 @@ public class MundoJuego {
 	* @param maxTiempo Tiempo máximo para que se mantengan las estrellas (msegs)
 	* @return Número de estrellas quitadas */
 	public int quitaYRotaEstrellas(long maxTiempo ){
-
-		int estrellasQuitadas = 0;
 		
 		for(int i=0; i<estrellas.size()-1; i++){
 			EstrellaJuego estrella = new EstrellaJuego();
@@ -230,7 +230,7 @@ public class MundoJuego {
 			
 			if(egia == true){
 				estrellas.remove(i);
-				//panel.remove(estrellas.get(i).getGrafico());
+				//panel.remove(estrellas.get(i).getGrafico());  // HAU JARRITA --> ERROREA
 				panel.repaint();
 				
 				choques++;
@@ -238,6 +238,7 @@ public class MundoJuego {
 		}
 		return choques;
 	}
+	
 	
 
 	public JPanel getPanel() {

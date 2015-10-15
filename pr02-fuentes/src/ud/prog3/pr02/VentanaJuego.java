@@ -262,6 +262,16 @@ public class VentanaJuego extends JFrame {
 				int puntos = estrellasAtrapadas*5;
 
 				mensaje.setText( "      Comidas :                 " + estrellasAtrapadas + "                           Puntuación :               " + puntos +"                           Perdidas :               " + estrellaQuitada );
+				
+				if(estrellaQuitada>=10){
+					acaba();
+					//Cerrar el panel principal
+					pPrincipal.setVisible(false);
+					
+					//Cerrar la ventana
+					System.exit(0); 
+				}
+				
 				// Dormir el hilo 40 milisegundos
 				try {
 					Thread.sleep( 40 );
