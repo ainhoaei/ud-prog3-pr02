@@ -1,6 +1,7 @@
 package ud.prog3.pr02;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 
 import javax.swing.JPanel;
@@ -14,12 +15,17 @@ import javax.swing.JPanel;
 public class MundoJuego {
 	private JPanel panel;  // panel visual del juego
 	CocheJuego miCoche;    // Coche del juego
+	JLabelEstrella estrella;
+	EstrellaJuego estrellaJuego;
+	JLabelCoche coche;
+	ArrayList<JLabelEstrella> estrellas;
 	
 	/** Construye un mundo de juego
 	 * @param panel	Panel visual del juego
 	 */
 	public MundoJuego( JPanel panel ) {
 		this.panel = panel;
+		estrellas = new ArrayList<JLabelEstrella>();
 	}
 
 	/** Crea un coche nuevo y lo añade al mundo y al panel visual
@@ -34,11 +40,24 @@ public class MundoJuego {
 		miCoche.getGrafico().repaint();  // Refresca el dibujado del coche
 	}
 	
+	public void creaEstrella( int posX, int posY ) {
+		// Crear y añadir la estrella a la ventana
+		estrellaJuego = new EstrellaJuego();
+		estrellaJuego.setPosisicion(posX, posY);
+		panel.add( estrellaJuego.getGrafico() );  // Añade al panel visual
+		estrellaJuego.getGrafico().repaint();  // Refresca el dibujado del coche
+		
+	}
+	
 	/** Devuelve el coche del mundo
 	 * @return	Coche en el mundo. Si no lo hay, devuelve null
 	 */
 	public CocheJuego getCoche() {
 		return miCoche;
+	}
+	
+	public EstrellaJuego getEstrella() {
+		return estrellaJuego;
 	}
 
 	/** Calcula si hay choque en horizontal con los límites del mundo
@@ -144,5 +163,30 @@ public class MundoJuego {
 		} else {
 			coche.acelera( aceleracion, 0.04 );
 		}
+	}
+	
+	
+	
+	
+	/** Calcula si hay choques del coche con alguna estrella (o varias). Se considera el choque si
+	* se tocan las esferas lógicas del coche y la estrella. Si es así, las elimina.
+	* @return Número de estrellas eliminadas
+	*/
+	public boolean choquesConEstrellas(JLabelEstrella estrella){
+		
+		//???????????????????????
+		coche = new JLabelCoche();
+		//Mirar posicion
+		//ESTRELLA.GETX + TAMAÑOESTRELLA/2 - KOTXE.GETX-TAMAÑOCOCHE/2   == DISTANCIAX
+		//DINTANCIA Y ==
+		//DISTANCIA == RAIZ CUADRADA DE LAS DOS DISTANCIAS ELEVADAS A DOS, MATH.SQRT
+		//RETURN (DISTA <= RADIOESFERACOCHE + RADIOESDERAESTRELLA)
+		
+		double distX = estrella.getX() + estrella.TAMANYO_ESTRELLA/2 - coche.getX() - coche.TAMANYO_COCHE/2;
+		double distY = estrella.getY() + estrella.TAMANYO_ESTRELLA/2 - coche.getY() - coche.TAMANYO_COCHE/2;
+		double distancia = Math.sqrt((distX*distX)+(distY*distY));
+		
+		return (distancia <= coche.RADIO_ESFERA_COCHE + estrella.RADIO_ESFERA_ESTRELLA);
+	
 	}
 }

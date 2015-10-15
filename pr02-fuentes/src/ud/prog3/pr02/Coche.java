@@ -83,6 +83,38 @@ public class Coche {
 	}
 
 
+	public double getCoefSuelo() {
+		return coefSuelo;
+	}
+
+	public void setCoefSuelo(double coefSuelo) {
+		this.coefSuelo = coefSuelo;
+	}
+
+	public double getCoefRozamiento() {
+		return coefRozamiento;
+	}
+
+	public void setCoefRozamiento(double coefRozamiento) {
+		this.coefRozamiento = coefRozamiento;
+	}
+
+	public double getMasa() {
+		return masa;
+	}
+
+	public void setMasa(double masa) {
+		this.masa = masa;
+	}
+
+	public double getCoefAire() {
+		return coefAire;
+	}
+
+	public void setCoefAire(double coefAire) {
+		this.coefAire = coefAire;
+	}
+
 	/** Cambia la velocidad actual del coche
 	 * @param aceleracion	Incremento/decremento de la velocidad en pixels/segundo
 	 * @param tiempo	Tiempo transcurrido en segundos
@@ -117,7 +149,8 @@ public class Coche {
 	* @return Fuerza de aceleración en Newtixels
 	*/
 	public double fuerzaAceleracionAdelante() {
-		if (miVelocidad<=-150) return FuerzaAdelante;
+		if (miVelocidad<=-150) 
+			return FuerzaAdelante;
 
 		else if (miVelocidad<=0)
 			return FuerzaAdelante*(-miVelocidad/150*0.5+0.5);
@@ -128,7 +161,8 @@ public class Coche {
 		else if (miVelocidad<=750)
 			return FuerzaAdelante;
 		
-		else return FuerzaAdelante*(-(miVelocidad-1000)/250);
+		else 
+			return FuerzaAdelante*(-(miVelocidad-1000)/250);
 	}
 	
 	public double FuerzaAceleraionAtras (){

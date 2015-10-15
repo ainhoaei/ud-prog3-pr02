@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 
 import javax.swing.*;
@@ -21,6 +22,9 @@ public class VentanaJuego extends JFrame {
 	MiRunnable miHilo = null;  // Hilo del bucle principal de juego	
 	private static boolean[] pulsaciones;
 	JLabelEstrella estrella;
+	EstrellaJuego miEstrella;
+	ArrayList<JLabelEstrella> estrellas;
+	ArrayList<Date> horaCreada;
 
 	/** Constructor de la ventana de juego. Crea y devuelve la ventana inicializada
 	 * sin coches dentro
@@ -30,6 +34,10 @@ public class VentanaJuego extends JFrame {
 		//JLabelEstrella estrella = new JLabelEstrella();
 		pulsaciones = new boolean[4];
 		estrella = new JLabelEstrella();
+		estrellas = new ArrayList<JLabelEstrella>();
+		
+		horaCreada = new ArrayList<Date>();
+		
 		
 		// Liberación de la ventana por defecto al cerrar
 		setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
@@ -91,13 +99,11 @@ public class VentanaJuego extends JFrame {
 					case KeyEvent.VK_UP: {
 						//miCoche.acelera( +5, 1 );
 						pulsaciones[0] = true;
-						miMundo.aplicarFuerza(miCoche.fuerzaAceleracionAdelante(), miCoche);
 						break;
 					}
 					case KeyEvent.VK_DOWN: {
 						//miCoche.acelera( -5, 1 );
 						pulsaciones[1] = true;
-						miMundo.aplicarFuerza(miCoche.FuerzaAceleraionAtras(), miCoche);
 						break;
 					}
 					case KeyEvent.VK_LEFT: {
@@ -170,10 +176,15 @@ public class VentanaJuego extends JFrame {
 					miVentana.setVisible( true );
 				}
 			});
+			// Crea el coche
 			miVentana.miMundo = new MundoJuego( miVentana.pPrincipal );
 			miVentana.miMundo.creaCoche( 150, 100 );
 			miVentana.miCoche = miVentana.miMundo.getCoche();
 			miVentana.miCoche.setPiloto( "Fernando Alonso" );
+			
+			// Crea la estrella
+			miVentana.miEstrella = miVentana.miMundo.getEstrella();
+			
 			// Crea el hilo de movimiento del coche y lo lanza
 			miVentana.miHilo = miVentana.new MiRunnable();  // Sintaxis de new para clase interna
 			Thread nuevoHilo = new Thread( miVentana.miHilo );
@@ -190,13 +201,14 @@ public class VentanaJuego extends JFrame {
 	 */
 	class MiRunnable implements Runnable {
 		boolean sigo = true;
+		
 		@Override
 		public void run() {
 			// Bucle principal forever hasta que se pare el juego...
 			double segundos = 0.0;
+			long maxTiempo = 0;
+			
 			while (sigo) {
-				// Mover coche
-				miCoche.mueve( 0.040 );
 				
 				// Chequear choques
 				// (se comprueba tanto X como Y porque podría a la vez chocar en las dos direcciones (esquinas)
@@ -205,27 +217,45 @@ public class VentanaJuego extends JFrame {
 				if (miMundo.hayChoqueVertical(miCoche)) // Espejo vertical si choca en Y
 					miMundo.rebotaVertical(miCoche);
 				
+				//CURSORES TECLADO
 				// Hau egin aurretik, botoiai eman eta segundu batzuk geldi egoten zen, ez zen segidon eta settun bueltaka hasten. 
 				// Hau eginda ez da geratzen, zuzenen bueltaka hasten de milisegundo horiek geldirik egon gabe.
 					if(pulsaciones[0] == true){
 						miCoche.acelera( +5, 1 );
+						//llamar fuerza aceleracion adelante
+						double fuerza = miCoche.fuerzaAceleracionAdelante();
+						//rozamiento --> fuerza total  --> Esto hace en el MundoJuego junto con aplicarFuerza
+						//aplicamos la fuerza total al coche --> fuerza de la aceleracion + rozamiento
+						miMundo.aplicarFuerza(fuerza, miCoche);
 					}
 					if(pulsaciones[1] == true){
 						miCoche.acelera( -5, 1 );
+						double fuerza = miCoche.FuerzaAceleraionAtras();
+						miMundo.aplicarFuerza(fuerza, miCoche);
 					}
+					else if (pulsaciones[0] == false && pulsaciones[1] == false){
+						double fuerzaRozamiento = miMundo.calcFuerzaRozamiento(miCoche.getMasa(), miCoche.getCoefSuelo(), miCoche.getCoefAire(), miCoche.getVelocidad());
+						miMundo.aplicarFuerza(fuerzaRozamiento, miCoche);
+					}
+					
 					if(pulsaciones[2] == true){
 						miCoche.gira( +10 );
 					}
 					if(pulsaciones[3] == true){
 						miCoche.gira( -10 );
 					}
-				
+					
+					// Mover coche
+					miCoche.mueve( 0.040 );
 				
 				if(segundos >= 1.2){
 					this.crearEstrella();
+					segundos = 0.0;
+					//this.quitaYRotaEstrellas((long) estrella.getTiempo());
+			
+				}else{
+					segundos = segundos + 0.040;
 				}
-				
-				segundos = segundos + 0.040;
 				
 				// Dormir el hilo 40 milisegundos
 				try {
@@ -239,37 +269,65 @@ public class VentanaJuego extends JFrame {
 		/** Si han pasado más de 1,2 segundos desde la última,
 		 * crea una estrella nueva en una posición aleatoria y la añade al mundo y al panel visual */
 		public void crearEstrella(){
-			
-			//???????????????????
-			
-			int PosRandomX = new Random().nextInt(1000);
-			int PosRandomY = new Random().nextInt(750);
-			ArrayList<JLabelEstrella> estrellas = new ArrayList<JLabelEstrella>();
+
+			miMundo.creaEstrella(this.posX(), this.posY());
+			double tiempo = estrella.getTiempo() + 1.2;
+			estrella.setTiempo(tiempo);
 			estrellas.add( estrella );
-			
 		}
 		
+		public int posX(){
+			int PosRandomX = new Random().nextInt(1000);
+			return PosRandomX;
+		}
+		
+		public int posY(){
+			int PosRandomY = new Random().nextInt(750);
+			return PosRandomY;
+		}
 		/** Quita todas las estrellas que lleven en pantalla demasiado tiempo
 		* y rota 10 grados las que sigan estando
 		* @param maxTiempo Tiempo máximo para que se mantengan las estrellas (msegs)
 		* @return Número de estrellas quitadas */
-		public int quitaYRotaEstrellas( long maxTiempo ){
-			
+		public int quitaYRotaEstrellas(long maxTiempo ){
 			//????????????????????????
 			
-			return (int) maxTiempo;
+			int estrellasQuitadas = 0;
+			
+			for(int i=0; i<estrellas.size()-1; i++){
+				if(maxTiempo < 6){
+					//if (miMundo.choquesConEstrellas(estrella)==true){
+						estrellas.remove(i);
+						estrellas.get(i).setTiempo(0.0);
+						estrellasQuitadas ++;
+					//}
+				}else{
+					estrellas.remove(i);
+					estrellas.get(i).setTiempo(0.0);
+				}
+				
+			}
+
+			return estrellasQuitadas;
 		}
+		
 		
 		/** Calcula si hay choques del coche con alguna estrella (o varias). Se considera el choque si
 		* se tocan las esferas lógicas del coche y la estrella. Si es así, las elimina.
 		* @return Número de estrellas eliminadas
 		*/
-		public int choquesConEstrellas(){
+	//	public int choquesConEstrellas(JLABERESTRELLA ESTRELLA){
 			
 			//???????????????????????
 			
-			return 1;
-		}
+			//Mirar posicion
+			//ESTRELLA.GETX + TAMAÑOESTRELLA/2 - KOTXE.GETX-TAMAÑOCOCHE/2   == DISTANCIAX
+			//DINTANCIA Y ==
+			//DISTANCIA == RAIZ CUADRADA DE LAS DOS DISTANCIAS ELEVADAS A DOS, MATH.SQRT
+			//RETURN (DISTA <= RADIOESFERACOCHE + RADIOESDERAESTRELLA)
+		
+		
+	//	}
 		
 		/** Ordena al hilo detenerse en cuanto sea posible
 		 */
