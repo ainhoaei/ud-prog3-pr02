@@ -17,8 +17,6 @@ public class JLabelEstrella extends JLabel{
 	public static final int TAMANYO_ESTRELLA = 40;  // píxels (igual ancho que algo)
 	public static final int RADIO_ESFERA_ESTRELLA = 15;  // Radio en píxels del bounding circle del coche (para choques)
 	private static final boolean DIBUJAR_ESFERA_ESTRELLA = true;  // Dibujado (para depuración) del bounding circle de choque del coche
-	//HORA CREACION DE ESTRELLA --> jakiteko noiz sortu deun izarra, atributo berri bat jarri. Sortzeanen zero jarri, eta 40 milisegundoko gehitzen jun (setTiempo)
-		private double tiempo;
 	
 	
 	/** Construye y devuelve el JLabel del coche con su gráfico y tamaño
@@ -27,7 +25,6 @@ public class JLabelEstrella extends JLabel{
 		// Esto se haría para acceder por sistema de ficheros
 		// 		super( new ImageIcon( "bin/ud/prog3/pr00/coche.png" ) );
 		// Esto se hace para acceder tanto por recurso (jar) como por fichero
-		tiempo = 0.0;
 		
 		try {
 			setIcon( new ImageIcon( JLabelEstrella.class.getResource( "img/estrella.png" ).toURI().toURL() ) );
@@ -72,14 +69,6 @@ public class JLabelEstrella extends JLabel{
 	        g2.drawImage( img, 0, 0, TAMANYO_ESTRELLA, TAMANYO_ESTRELLA, null );
 	        if (DIBUJAR_ESFERA_ESTRELLA) g2.drawOval( TAMANYO_ESTRELLA/2-RADIO_ESFERA_ESTRELLA, TAMANYO_ESTRELLA/2-RADIO_ESFERA_ESTRELLA,
 	        		RADIO_ESFERA_ESTRELLA*2, RADIO_ESFERA_ESTRELLA*2 );
-		}
-		
-		public double getTiempo() {
-			return tiempo;
-		}
-
-		public void setTiempo(double tiempo) {
-			this.tiempo = tiempo;
 		}
 		
 }

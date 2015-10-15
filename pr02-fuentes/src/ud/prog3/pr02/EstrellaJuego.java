@@ -1,5 +1,6 @@
 package ud.prog3.pr02;
 
+import java.util.Date;
 import java.util.Random;
 
 public class EstrellaJuego {
@@ -7,6 +8,8 @@ public class EstrellaJuego {
 	private JLabelEstrella miGrafico;  // Etiqueta gráfica del coche
 	private int posX;
 	private int posY;
+	//HORA CREACION DE ESTRELLA --> jakiteko noiz sortu deun izarra, atributo berri bat jarri. Sortzeanen zero jarri, eta 40 milisegundoko gehitzen jun (setTiempo)
+		private Date fechaCreada;
 	
 	
 	public EstrellaJuego() {
@@ -35,6 +38,13 @@ public class EstrellaJuego {
 		miGrafico.repaint();
 	}
 
+	public Date getfechaCreada() {
+		return fechaCreada;
+	}
+
+	public void setfechaCreada(Date fechaCreada) {
+		this.fechaCreada = fechaCreada;
+	}
 	
 
 }

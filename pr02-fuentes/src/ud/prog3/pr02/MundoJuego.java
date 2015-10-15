@@ -15,19 +15,20 @@ import javax.swing.JPanel;
 public class MundoJuego {
 	private JPanel panel;  // panel visual del juego
 	CocheJuego miCoche;    // Coche del juego
-	JLabelEstrella estrella;
-	EstrellaJuego estrellaJuego;
+	EstrellaJuego estrella;
 	JLabelCoche coche;
-	ArrayList<JLabelEstrella> estrellas;
+	ArrayList<EstrellaJuego> estrellas = new ArrayList<EstrellaJuego>();;
+	
 	
 	/** Construye un mundo de juego
 	 * @param panel	Panel visual del juego
 	 */
 	public MundoJuego( JPanel panel ) {
 		this.panel = panel;
-		estrellas = new ArrayList<JLabelEstrella>();
 	}
 
+	
+	//------------------------ COCHE ---------------------------------//
 	/** Crea un coche nuevo y lo añade al mundo y al panel visual
 	 * @param posX	Posición X de pixel del nuevo coche
 	 * @param posY	Posición Y de píxel del nuevo coche
@@ -40,24 +41,11 @@ public class MundoJuego {
 		miCoche.getGrafico().repaint();  // Refresca el dibujado del coche
 	}
 	
-	public void creaEstrella( int posX, int posY ) {
-		// Crear y añadir la estrella a la ventana
-		estrellaJuego = new EstrellaJuego();
-		estrellaJuego.setPosisicion(posX, posY);
-		panel.add( estrellaJuego.getGrafico() );  // Añade al panel visual
-		estrellaJuego.getGrafico().repaint();  // Refresca el dibujado del coche
-		
-	}
-	
 	/** Devuelve el coche del mundo
 	 * @return	Coche en el mundo. Si no lo hay, devuelve null
 	 */
 	public CocheJuego getCoche() {
 		return miCoche;
-	}
-	
-	public EstrellaJuego getEstrella() {
-		return estrellaJuego;
 	}
 
 	/** Calcula si hay choque en horizontal con los límites del mundo
@@ -168,25 +156,97 @@ public class MundoJuego {
 	
 	
 	
+	//------------------------ ESTRELLAS ---------------------------------//
+	public void creaEstrella(int posX, int posY ) {
+		// Crear y añadir la estrella a la ventana
+		Date fechaCreada = new Date();
+		EstrellaJuego estrellaJuego = new EstrellaJuego();
+		estrellas.add(estrellaJuego);
+		estrellaJuego.setfechaCreada(fechaCreada);
+		estrellaJuego.setPosisicion(posX, posY);
+		panel.add( estrellaJuego.getGrafico() );  // Añade al panel visual
+		estrellaJuego.getGrafico().repaint();  // Refresca el dibujado del coche
+		
+	}
+	
+	public EstrellaJuego getEstrella() {
+		return estrella;
+	}
+	
+	/** Quita todas las estrellas que lleven en pantalla demasiado tiempo
+	* y rota 10 grados las que sigan estando
+	* @param maxTiempo Tiempo máximo para que se mantengan las estrellas (msegs)
+	* @return Número de estrellas quitadas */
+	public int quitaYRotaEstrellas(long maxTiempo ){
+
+		int estrellasQuitadas = 0;
+		
+		for(int i=0; i<estrellas.size()-1; i++){
+			EstrellaJuego estrella = new EstrellaJuego();
+			estrella = estrellas.get(i);
+			
+			//Fecha de creada de la estrella
+			Date fechaCreada = estrella.getfechaCreada();
+			long milisegundos = fechaCreada.getTime();
+			
+			//Fecha de ahora
+			Date ahora = new Date();
+			long milisegundosAhora = ahora.getTime();
+			
+			if((milisegundosAhora-milisegundos) >= maxTiempo){
+				estrellas.remove(estrella);
+				panel.remove(estrella.getGrafico());
+				panel.repaint();
+				estrellasQuitadas ++;
+			}
+			else{
+				//Codificiación de giro de la estrella 
+				//objetoEstrella.setGiro(10);
+			}
+		}
+		
+		return estrellasQuitadas;
+	}
+	
 	/** Calcula si hay choques del coche con alguna estrella (o varias). Se considera el choque si
 	* se tocan las esferas lógicas del coche y la estrella. Si es así, las elimina.
 	* @return Número de estrellas eliminadas
 	*/
-	public boolean choquesConEstrellas(JLabelEstrella estrella){
+	public int choquesConEstrellas (){
 		
 		//???????????????????????
+		
+		int choques = 0;
 		coche = new JLabelCoche();
-		//Mirar posicion
-		//ESTRELLA.GETX + TAMAÑOESTRELLA/2 - KOTXE.GETX-TAMAÑOCOCHE/2   == DISTANCIAX
-		//DINTANCIA Y ==
-		//DISTANCIA == RAIZ CUADRADA DE LAS DOS DISTANCIAS ELEVADAS A DOS, MATH.SQRT
-		//RETURN (DISTA <= RADIOESFERACOCHE + RADIOESDERAESTRELLA)
-		
-		double distX = estrella.getX() + estrella.TAMANYO_ESTRELLA/2 - coche.getX() - coche.TAMANYO_COCHE/2;
-		double distY = estrella.getY() + estrella.TAMANYO_ESTRELLA/2 - coche.getY() - coche.TAMANYO_COCHE/2;
-		double distancia = Math.sqrt((distX*distX)+(distY*distY));
-		
-		return (distancia <= coche.RADIO_ESFERA_COCHE + estrella.RADIO_ESFERA_ESTRELLA);
-	
+		JLabelEstrella estre = new JLabelEstrella();
+		EstrellaJuego estrellaJuego = new EstrellaJuego();
+
+		for (int i=0; i < estrellas.size(); i++){
+			double distX = estre.getX() + estre.TAMANYO_ESTRELLA/2 - coche.getX() - coche.TAMANYO_COCHE/2;
+			double distY = estre.getY() + estre.TAMANYO_ESTRELLA/2 - coche.getY() - coche.TAMANYO_COCHE/2;
+			double distancia = Math.sqrt((distX*distX)+(distY*distY));
+			
+			boolean egia = (distancia <= coche.RADIO_ESFERA_COCHE + estre.RADIO_ESFERA_ESTRELLA);
+			
+			if(egia == true){
+				estrellas.remove(i);
+				//panel.remove(estrellas.get(i).getGrafico());
+				panel.repaint();
+				
+				choques++;
+			}
+		}
+		return choques;
 	}
+	
+
+	public JPanel getPanel() {
+		return panel;
+	}
+
+	public void setPanel(JPanel panel) {
+		this.panel = panel;
+	}
+	
+	
 }

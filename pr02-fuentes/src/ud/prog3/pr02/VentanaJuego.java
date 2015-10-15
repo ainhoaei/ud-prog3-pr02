@@ -23,8 +23,7 @@ public class VentanaJuego extends JFrame {
 	private static boolean[] pulsaciones;
 	JLabelEstrella estrella;
 	EstrellaJuego miEstrella;
-	ArrayList<JLabelEstrella> estrellas;
-	ArrayList<Date> horaCreada;
+	JLabel mensaje;
 
 	/** Constructor de la ventana de juego. Crea y devuelve la ventana inicializada
 	 * sin coches dentro
@@ -34,62 +33,60 @@ public class VentanaJuego extends JFrame {
 		//JLabelEstrella estrella = new JLabelEstrella();
 		pulsaciones = new boolean[4];
 		estrella = new JLabelEstrella();
-		estrellas = new ArrayList<JLabelEstrella>();
-		
-		horaCreada = new ArrayList<Date>();
+		mensaje = new JLabel();
 		
 		
 		// Liberación de la ventana por defecto al cerrar
 		setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
 		// Creación contenedores y componentes
 		pPrincipal = new JPanel();
-		JPanel pBotonera = new JPanel();
-		JButton bAcelerar = new JButton( "Acelera" );
-		JButton bFrenar = new JButton( "Frena" );
-		JButton bGiraIzq = new JButton( "Gira Izq." );
-		JButton bGiraDer = new JButton( "Gira Der." );
+//		JPanel pBotonera = new JPanel();
+//		JButton bAcelerar = new JButton( "Acelera" );
+//		JButton bFrenar = new JButton( "Frena" );
+//		JButton bGiraIzq = new JButton( "Gira Izq." );
+//		JButton bGiraDer = new JButton( "Gira Der." );
 		// Formato y layouts
 		pPrincipal.setLayout( null );
 		pPrincipal.setBackground( Color.white );
 		// Añadido de componentes a contenedores
 		add( pPrincipal, BorderLayout.CENTER );
-		pBotonera.add( bAcelerar );
-		pBotonera.add( bFrenar );
-		pBotonera.add( bGiraIzq );
-		pBotonera.add( bGiraDer );
-		add( pBotonera, BorderLayout.SOUTH );
+//		pBotonera.add( bAcelerar );
+//		pBotonera.add( bFrenar );
+//		pBotonera.add( bGiraIzq );
+//		pBotonera.add( bGiraDer );
+		add( mensaje, BorderLayout.SOUTH );
 		// Formato de ventana
 		setSize( 1000, 750 );
 		setResizable( false );
 		// Escuchadores de botones
-		bAcelerar.addActionListener( new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				miCoche.acelera( +10, 1 );
-				// System.out.println( "Nueva velocidad de coche: " + miCoche.getVelocidad() );
-			}
-		});
-		bFrenar.addActionListener( new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				miCoche.acelera( -10, 1 );
-				// System.out.println( "Nueva velocidad de coche: " + miCoche.getVelocidad() );
-			}
-		});
-		bGiraIzq.addActionListener( new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				miCoche.gira( +10 );
-				// System.out.println( "Nueva dirección de coche: " + miCoche.getDireccionActual() );
-			}
-		});
-		bGiraDer.addActionListener( new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				miCoche.gira( -10 );
-				// System.out.println( "Nueva dirección de coche: " + miCoche.getDireccionActual() );
-			}
-		});
+//		bAcelerar.addActionListener( new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				miCoche.acelera( +10, 1 );
+//				// System.out.println( "Nueva velocidad de coche: " + miCoche.getVelocidad() );
+//			}
+//		});
+//		bFrenar.addActionListener( new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				miCoche.acelera( -10, 1 );
+//				// System.out.println( "Nueva velocidad de coche: " + miCoche.getVelocidad() );
+//			}
+//		});
+//		bGiraIzq.addActionListener( new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				miCoche.gira( +10 );
+//				// System.out.println( "Nueva dirección de coche: " + miCoche.getDireccionActual() );
+//			}
+//		});
+//		bGiraDer.addActionListener( new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				miCoche.gira( -10 );
+//				// System.out.println( "Nueva dirección de coche: " + miCoche.getDireccionActual() );
+//			}
+//		});
 		
 		// Añadido para que también se gestione por teclado con el KeyListener
 		pPrincipal.addKeyListener( new KeyAdapter() {
@@ -167,6 +164,7 @@ public class VentanaJuego extends JFrame {
 	 */
 	public static void main(String[] args) {
 		// Crea y visibiliza la ventana con el coche
+	
 		
 		try {
 			final VentanaJuego miVentana = new VentanaJuego();
@@ -249,14 +247,21 @@ public class VentanaJuego extends JFrame {
 					miCoche.mueve( 0.040 );
 				
 				if(segundos >= 1.2){
-					this.crearEstrella();
+					miMundo.creaEstrella(this.posX(), this.posY());
 					segundos = 0.0;
-					//this.quitaYRotaEstrellas((long) estrella.getTiempo());
 			
 				}else{
 					segundos = segundos + 0.040;
 				}
 				
+				//Que cada 6 segundos se quite la estrella
+				int estrellaQuitada = miMundo.quitaYRotaEstrellas(6000);
+				
+				int estrellasAtrapadas = miMundo.choquesConEstrellas();		
+				
+				int puntos = estrellasAtrapadas*5;
+
+				mensaje.setText( "      Comidas :                 " + estrellasAtrapadas + "                           Puntuación :               " + puntos +"                           Perdidas :               " + estrellaQuitada );
 				// Dormir el hilo 40 milisegundos
 				try {
 					Thread.sleep( 40 );
@@ -264,16 +269,6 @@ public class VentanaJuego extends JFrame {
 				}
 			
 			}
-		}
-		
-		/** Si han pasado más de 1,2 segundos desde la última,
-		 * crea una estrella nueva en una posición aleatoria y la añade al mundo y al panel visual */
-		public void crearEstrella(){
-
-			miMundo.creaEstrella(this.posX(), this.posY());
-			double tiempo = estrella.getTiempo() + 1.2;
-			estrella.setTiempo(tiempo);
-			estrellas.add( estrella );
 		}
 		
 		public int posX(){
@@ -285,31 +280,7 @@ public class VentanaJuego extends JFrame {
 			int PosRandomY = new Random().nextInt(750);
 			return PosRandomY;
 		}
-		/** Quita todas las estrellas que lleven en pantalla demasiado tiempo
-		* y rota 10 grados las que sigan estando
-		* @param maxTiempo Tiempo máximo para que se mantengan las estrellas (msegs)
-		* @return Número de estrellas quitadas */
-		public int quitaYRotaEstrellas(long maxTiempo ){
-			//????????????????????????
-			
-			int estrellasQuitadas = 0;
-			
-			for(int i=0; i<estrellas.size()-1; i++){
-				if(maxTiempo < 6){
-					//if (miMundo.choquesConEstrellas(estrella)==true){
-						estrellas.remove(i);
-						estrellas.get(i).setTiempo(0.0);
-						estrellasQuitadas ++;
-					//}
-				}else{
-					estrellas.remove(i);
-					estrellas.get(i).setTiempo(0.0);
-				}
-				
-			}
-
-			return estrellasQuitadas;
-		}
+		
 		
 		
 		/** Calcula si hay choques del coche con alguna estrella (o varias). Se considera el choque si
@@ -328,6 +299,7 @@ public class VentanaJuego extends JFrame {
 		
 		
 	//	}
+		
 		
 		/** Ordena al hilo detenerse en cuanto sea posible
 		 */
