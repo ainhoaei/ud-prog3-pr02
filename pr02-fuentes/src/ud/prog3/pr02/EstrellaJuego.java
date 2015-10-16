@@ -46,5 +46,20 @@ public class EstrellaJuego {
 		this.fechaCreada = fechaCreada;
 	}
 	
+	// giro
+			private double miGiro = Math.PI/2;
+			/** Cambia el giro del JLabel
+			 * @param gradosGiro	Grados a los que tiene que "apuntar" el coche,
+			 * 						considerados con el 0 en el eje OX positivo,
+			 * 						positivo en sentido antihorario, negativo horario.
+			 */
+			public void setGiro( double gradosGiro ) {
+				// De grados a radianes...
+				miGiro = gradosGiro/180*Math.PI;
+				// El giro en la pantalla es en sentido horario (inverso):
+				miGiro = -miGiro;  // Cambio el sentido del giro
+				// Y el gráfico del coche apunta hacia arriba (en lugar de derecha OX)
+				miGiro = miGiro + Math.PI/2; // Sumo 90º para que corresponda al origen OX
+			}
 
 }

@@ -19,7 +19,7 @@ public class MundoJuego {
 	JLabelCoche coche;
 	ArrayList<EstrellaJuego> estrellas = new ArrayList<EstrellaJuego>();
 	int estrellasQuitadas = 0;
-	int numChoques = 0;
+	int choques = 0;
 	
 	
 	/** Construye un mundo de juego
@@ -181,7 +181,9 @@ public class MundoJuego {
 	* @return Número de estrellas quitadas */
 	public int quitaYRotaEstrellas(long maxTiempo ){
 		
-		for(int i=0; i<estrellas.size()-1; i++){
+		JLabelEstrella labelEstrella = new JLabelEstrella();
+		
+		for(int i=0; i<estrellas.size(); i++){
 			EstrellaJuego estrella = new EstrellaJuego();
 			estrella = estrellas.get(i);
 			
@@ -201,7 +203,7 @@ public class MundoJuego {
 			}
 			else{
 				//Codificiación de giro de la estrella 
-				//objetoEstrella.setGiro(10);
+				estrella.setGiro(10);
 			}
 		}
 		
@@ -216,7 +218,6 @@ public class MundoJuego {
 		
 		//???????????????????????
 		
-		int choques = 0;
 		coche = new JLabelCoche();
 		JLabelEstrella estre = new JLabelEstrella();
 		EstrellaJuego estrellaJuego = new EstrellaJuego();
@@ -226,11 +227,11 @@ public class MundoJuego {
 			double distY = estre.getY() + estre.TAMANYO_ESTRELLA/2 - coche.getY() - coche.TAMANYO_COCHE/2;
 			double distancia = Math.sqrt((distX*distX)+(distY*distY));
 			
-			boolean egia = (distancia <= coche.RADIO_ESFERA_COCHE + estre.RADIO_ESFERA_ESTRELLA);
+			boolean egia = (distancia == coche.RADIO_ESFERA_COCHE + estre.RADIO_ESFERA_ESTRELLA);
 			
 			if(egia == true){
 				estrellas.remove(i);
-				//panel.remove(estrellas.get(i).getGrafico());  // HAU JARRITA --> ERROREA
+				panel.remove(estrellas.get(i).getGrafico());
 				panel.repaint();
 				
 				choques++;
@@ -239,7 +240,8 @@ public class MundoJuego {
 		return choques;
 	}
 	
-	
+
+
 
 	public JPanel getPanel() {
 		return panel;
